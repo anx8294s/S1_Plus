@@ -37,8 +37,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private ListView listView;
     private ManiListAdapter maniListAdapter;
     private SubListAdapter subListAdapter;
-    Spinner spinner;
-    ArrayAdapter<MainForumItem> spinnerAdapter;
+    private ArrayAdapter<MainForumItem> spinnerAdapter;
 
     private ArrayList<MainForumItem> mainForumItems = new ArrayList<MainForumItem>();
     private ArrayList<SubForumItem> subForumItems = new ArrayList<SubForumItem>();
@@ -149,7 +148,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         MenuItem item = menu.findItem(R.id.spinner);
-        spinner = (Spinner) MenuItemCompat.getActionView(item);
+        Spinner spinner = (Spinner) MenuItemCompat.getActionView(item);
         spinnerAdapter = new ArrayAdapter<MainForumItem>(this, R.layout.spinner_layout, subChildren);
         spinner.setAdapter(spinnerAdapter);
         spinner.setOnItemSelectedListener(this);
