@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">S1+</string>
+
+    <string name="return_top">回到页首</string>
+    <string name="username">用户名</string>
+    <string name="password">密码</string>
+    <string name="answer">答案</string>
+    <string name="login">登录</string>
+    <string name="login_menu">登录 | 退出 | 更换帐号</string>
+    <string name="show_favorite">我的收藏</string>
+    <string name="add_favorite">收藏本帖</string>
+    <string name="fast_post">快速回复</string>
+    <string name="post_hint">参与/回复主题</string>
+
+
+    <string-array name="question_list">
+        <item>安全提问</item>
+        <item>母亲的名字</item>
+        <item>爷爷的名字</item>
+        <item>父亲出生的城市</item>
+        <item>您其中一位老师的名字</item>
+        <item>您个人计算机的型号</item>
+        <item>您最喜欢的餐馆名称</item>
+        <item>驾驶执照最后四位数字</item>
+    </string-array>
+
+</resources>

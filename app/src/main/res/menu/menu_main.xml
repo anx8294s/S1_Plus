@@ -1,0 +1,23 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+      xmlns:app="http://schemas.android.com/apk/res-auto"
+      xmlns:tools="http://schemas.android.com/tools"
+      tools:context=".MainActivity">
+    <item
+            android:id="@+id/action_login"
+            android:title="@string/login_menu"
+            android:orderInCategory="100"
+            app:showAsAction="never"/>
+
+    <item
+            android:id="@+id/show_favorite"
+            android:title="@string/show_favorite"
+            android:orderInCategory="90"
+            app:showAsAction="ifRoom"/>
+
+    <item
+            android:id="@+id/spinner"
+            android:title=""
+            android:orderInCategory="10"
+            app:showAsAction="ifRoom"
+            app:actionViewClass="android.widget.Spinner"/>
+</menu>
