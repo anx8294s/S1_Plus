@@ -26,8 +26,8 @@ public class TopicActivity extends AppCompatActivity implements AdapterView.OnIt
         SwipeRefreshLayout.OnRefreshListener, AbsListView.OnScrollListener {
 
     private int scrollState = SCROLL_STATE_IDLE;
-    private String currentPage;
     private boolean isFromRefresh;
+    private String currentPage;
 
     private View footer;
     private ListView listView;

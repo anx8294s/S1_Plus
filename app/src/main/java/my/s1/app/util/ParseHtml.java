@@ -157,7 +157,7 @@ public class ParseHtml {
             if (msg == null) {
                 msg = document.getElementsByClass("emp").first();
             }
-            SubForumItem item = new SubForumItem("", "", "", msg.text());
+            SubForumItem item = new SubForumItem("favorite", "", "", msg.text());
             arrayList.add(item);
             return arrayList;
         }

@@ -26,11 +26,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         AdapterView.OnItemLongClickListener, SwipeRefreshLayout.OnRefreshListener,
         AbsListView.OnScrollListener, AdapterView.OnItemSelectedListener {
 
-    public final int LEVEL_MainForum = 0;
-    public final int LEVEL_SubForum = 1;
-    public final int LEVEL_FAVORITE = 2;
-    private final String favoriteList = "http://bbs.saraba1st.com/2b/home.php?mod=space&do=favorite&view=me";
-
+    private final int LEVEL_MainForum = 0;
+    private final int LEVEL_SubForum = 1;
+    private final int LEVEL_FAVORITE = 2;
+    private final String favoriteListUrl = "http://bbs.saraba1st.com/2b/home.php?mod=space&do=favorite&view=me";
 
     private int currentLevel;
     private SwipeRefreshLayout swipeRefreshLayout;
@@ -95,9 +94,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         listView.setAdapter(subListAdapter);
         currentLevel = LEVEL_FAVORITE;
         subForumItems.clear();
-        ArrayList<SubForumItem> favorites = subForumMap.get(favoriteList);
+        ArrayList<SubForumItem> favorites = subForumMap.get(favoriteListUrl);
         if (favorites == null || favorites.isEmpty()) {
-            loadForumListFromNet(favoriteList);
+            loadForumListFromNet(favoriteListUrl);
         } else {
             subForumItems.addAll(favorites);
             subListAdapter.notifyDataSetChanged();
@@ -135,7 +134,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 } else if (currentLevel == LEVEL_FAVORITE) {
                     ArrayList<SubForumItem> forumItems = ParseHtml.parseFavorite(responseString);
                     subForumItems.addAll(forumItems);
-                    subForumMap.put(favoriteList, forumItems);
+                    subForumMap.put(favoriteListUrl, forumItems);
                     subListAdapter.notifyDataSetChanged();
                 }
                 swipeRefreshLayout.setRefreshing(false);
@@ -178,7 +177,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         } else if (currentLevel == LEVEL_SubForum || currentLevel == LEVEL_FAVORITE) {
             Intent intent = new Intent(this, TopicActivity.class);
             SubForumItem item = subForumItems.get(position);
-            if (item.url.equals("")) {
+            if (item.url.equals("favorite")) {
                 loadMainList();
             } else {
                 intent.putExtra("url", item.url);
