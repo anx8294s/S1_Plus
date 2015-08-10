@@ -3,7 +3,9 @@ Saraba1st论坛的安卓客户端
 
 网络通信使用 Asynchronous Http Client 实现
 
-图片下载采用 Volley, 图片缓存为 LruCache + DiskLruCache 的双重缓存, 使用了 largeHeap 避免出现 OOM
+图片下载采用 Volley, 图片缓存为 LruCache + DiskLruCache 的双重缓存
+
+使用 largeHeap 避免加载大量图片的帖子时出现 OOM
 
 使用 Jsoup分析返回的网络请求
 
