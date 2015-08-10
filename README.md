@@ -1,13 +1,13 @@
-# S1_Plus
-Saraba1st论坛的安卓客户端,个人学习用
+## S1_Plus
+Saraba1st论坛的安卓客户端
 
 网络通信使用 Asynchronous Http Client 实现
 
-图片下载使用 Volley, 图片缓存为 LruCache + DiskLruCache 的双重缓存, 使用 largeHeap 避免出现 OOM
+图片下载采用 Volley, 图片缓存为 LruCache + DiskLruCache 的双重缓存, 使用了 largeHeap 避免出现 OOM
 
 使用 Jsoup分析返回的网络请求
 
-论坛列表和帖子列表使用惰性刷新, 如果有历史记录就从历史记录读取
+论坛列表和帖子列表采用惰性刷新, 如果内存有历史记录就从历史记录读取
 
 整个应用实现的功能有:
 
