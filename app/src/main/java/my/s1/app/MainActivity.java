@@ -9,6 +9,10 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.*;
+import butterknife.Bind;
+import butterknife.ButterKnife;
+import butterknife.OnItemClick;
+import butterknife.OnItemLongClick;
 import com.loopj.android.http.TextHttpResponseHandler;
 import my.s1.app.adapter.ManiListAdapter;
 import my.s1.app.adapter.SubListAdapter;
@@ -22,8 +26,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 
-public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener,
-        AdapterView.OnItemLongClickListener, SwipeRefreshLayout.OnRefreshListener,
+public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener,
         AbsListView.OnScrollListener, AdapterView.OnItemSelectedListener {
 
     private final int LEVEL_MainForum = 0;
@@ -32,8 +35,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private final String favoriteListUrl = "http://bbs.saraba1st.com/2b/home.php?mod=space&do=favorite&view=me";
 
     private int currentLevel;
-    private SwipeRefreshLayout swipeRefreshLayout;
-    private ListView listView;
+    @Bind(R.id.swipe_layout) SwipeRefreshLayout swipeRefreshLayout;
+    @Bind(R.id.listview) ListView listView;
     private ManiListAdapter maniListAdapter;
     private SubListAdapter subListAdapter;
     private ArrayAdapter<MainForumItem> spinnerAdapter;
@@ -45,23 +48,18 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private HashMap<String, ArrayList<MainForumItem>> subChildrenMap = new HashMap<String, ArrayList<MainForumItem>>();
     private MainForumItem subForum;
 
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        listView = (ListView) findViewById(R.id.listview);
+        ButterKnife.bind(this);
         maniListAdapter = new ManiListAdapter(this, R.layout.forum_item, mainForumItems);
         subListAdapter = new SubListAdapter(this, R.layout.forum_item, subForumItems);
-        listView.setOnItemClickListener(this);
-        listView.setOnItemLongClickListener(this);
-        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe_layout);
         swipeRefreshLayout.setOnRefreshListener(this);
         swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_dark);
         listView.setOnScrollListener(this);
         loadMainList();
     }
-
 
     private void loadMainList() {
         String url = "http://bbs.saraba1st.com/2b/forum.php";
@@ -169,8 +167,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         return super.onOptionsItemSelected(item);
     }
 
-    @Override
-    public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+    @OnItemClick(R.id.listview)
+    public void onItemClick(int position) {
         if (currentLevel == LEVEL_MainForum) {
             subForum = mainForumItems.get(position);
             loadSubList();
@@ -186,8 +184,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
     }
 
-    @Override
-    public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
+    @OnItemLongClick(R.id.listview)
+    public boolean onItemLongClick(int position) {
         if (currentLevel == LEVEL_MainForum) {
             subForum = mainForumItems.get(position);
             currentLevel = LEVEL_SubForum;
@@ -251,6 +249,5 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
-
     }
 }

@@ -2,8 +2,10 @@ package my.s1.app.util;
 
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.ImageLoader;
+import de.greenrobot.event.EventBus;
 import my.s1.app.MyApp;
 import my.s1.app.models.MainForumItem;
+import my.s1.app.models.MessageEvent;
 import my.s1.app.models.SubForumItem;
 import my.s1.app.models.Topic;
 import org.jsoup.Jsoup;
@@ -104,27 +106,23 @@ public class ParseHtml {
 
     private static void doWithImages(final HashSet<String> imgUrls) {
         if (imgUrls.isEmpty()) {
-            MyApp.topicActivity.checkTaskDone(0, 0);
+            EventBus.getDefault().post(new MessageEvent(0, 0));
         }
-        final HashSet<String> taskCount = new HashSet<String>();
+        final HashSet<String> taskDone = new HashSet<String>();
         for (final String url : imgUrls) {
             MyApp.myImageLoader.get(url, new ImageLoader.ImageListener() {
                 @Override
                 public void onResponse(ImageLoader.ImageContainer response, boolean isImmediate) {
                     if (MyApp.myDiskCache.getBitmap(url) != null) {
-                        taskCount.add(url);
+                        taskDone.add(url);
                     }
-                    if (MyApp.topicActivity != null) {
-                        MyApp.topicActivity.checkTaskDone(imgUrls.size(), taskCount.size());
-                    }
+                    EventBus.getDefault().post(new MessageEvent(imgUrls.size(), taskDone.size()));
                 }
 
                 @Override
                 public void onErrorResponse(VolleyError error) {
-                    taskCount.add(url);
-                    if (MyApp.topicActivity != null) {
-                        MyApp.topicActivity.checkTaskDone(imgUrls.size(), taskCount.size());
-                    }
+                    taskDone.add(url);
+                    EventBus.getDefault().post(new MessageEvent(imgUrls.size(), taskDone.size()));
                 }
             }, MyApp.screenWidth, MyApp.screenHeight);
         }
