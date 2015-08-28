@@ -1,13 +1,19 @@
 package my.s1.app;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.*;
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -27,7 +33,7 @@ import java.util.HashMap;
 
 
 public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener,
-        AbsListView.OnScrollListener, AdapterView.OnItemSelectedListener {
+        AbsListView.OnScrollListener, AdapterView.OnItemSelectedListener, NavigationView.OnNavigationItemSelectedListener {
 
     private final int LEVEL_MainForum = 0;
     private final int LEVEL_SubForum = 1;
@@ -35,8 +41,12 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     private final String favoriteListUrl = "http://bbs.saraba1st.com/2b/home.php?mod=space&do=favorite&view=me";
 
     private int currentLevel;
+    @Bind(R.id.toolbar) android.support.v7.widget.Toolbar toolbar;
     @Bind(R.id.swipe_layout) SwipeRefreshLayout swipeRefreshLayout;
+    @Bind(R.id.drawer_layout) DrawerLayout drawerLayout;
+    @Bind(R.id.navigation) NavigationView navigationView;
     @Bind(R.id.listview) ListView listView;
+    private ActionBarDrawerToggle drawerToggle;
     private ManiListAdapter maniListAdapter;
     private SubListAdapter subListAdapter;
     private ArrayAdapter<MainForumItem> spinnerAdapter;
@@ -51,13 +61,24 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS,
+                    WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
+        }
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+        setSupportActionBar(toolbar);
+        drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
+        drawerToggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar,
+                R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawerToggle.syncState();
+        drawerLayout.setDrawerListener(drawerToggle);
         maniListAdapter = new ManiListAdapter(this, R.layout.forum_item, mainForumItems);
         subListAdapter = new SubListAdapter(this, R.layout.forum_item, subForumItems);
         swipeRefreshLayout.setOnRefreshListener(this);
         swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_dark);
         listView.setOnScrollListener(this);
+        navigationView.setNavigationItemSelectedListener(this);
         loadMainList();
     }
 
@@ -249,5 +270,10 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
     @Override
     public void onNothingSelected(AdapterView<?> adapterView) {
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(MenuItem menuItem) {
+        return false;
     }
 }

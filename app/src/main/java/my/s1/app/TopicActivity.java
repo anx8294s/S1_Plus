@@ -44,7 +44,7 @@ public class TopicActivity extends AppCompatActivity implements SwipeRefreshLayo
         super.onCreate(savedInstanceState);
         setContentView(R.layout.topic_layout);
         ButterKnife.bind(this);
-        ViewGroup parent = (ViewGroup) findViewById(R.id.container);
+        ViewGroup parent = (ViewGroup) findViewById(R.id.footer_container);
         footer = LayoutInflater.from(this).inflate(R.layout.footer, parent, false);
         footer.setVisibility(View.GONE);
         listView.addFooterView(footer, null, false);

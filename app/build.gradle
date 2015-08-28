@@ -45,4 +45,5 @@ dependencies {
     compile 'com.jakewharton:disklrucache:2.0.2'
     compile 'de.greenrobot:eventbus:3.0.0-beta1'
     compile 'com.jakewharton:butterknife:7.0.1'
+    compile 'com.android.support:design:22.2.0'
 }
