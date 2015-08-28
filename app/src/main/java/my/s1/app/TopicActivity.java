@@ -2,14 +2,15 @@ package my.s1.app;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.view.*;
 import android.widget.AbsListView;
 import android.widget.ListView;
 import android.widget.Toast;
 import butterknife.Bind;
-import butterknife.ButterKnife;
 import butterknife.OnItemLongClick;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -27,26 +28,31 @@ import org.apache.http.Header;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class TopicActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener, AbsListView.OnScrollListener {
+public class TopicActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener, AbsListView.OnScrollListener {
 
     private int scrollState = SCROLL_STATE_IDLE;
     private boolean isFromRefresh = false;
     private String currentPage;
     private View footer;
+    @Bind(R.id.navigation) NavigationView navigationView;
+    @Bind(R.id.drawer_layout) DrawerLayout drawerLayout;
+    @Bind(R.id.swipe_layout) SwipeRefreshLayout swipeRefreshLayout;
     @Bind(R.id.listview) ListView listView;
     private TopicListAdapter adapter;
-    @Bind(R.id.topic_swipe_layout) SwipeRefreshLayout swipeRefreshLayout;
     private ArrayList<Topic> topics = new ArrayList<Topic>();
     private HashMap<String, ArrayList<Topic>> pageMap = new HashMap<String, ArrayList<Topic>>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.topic_layout);
-        ButterKnife.bind(this);
+        setContentView(R.layout.activity_main);
+        initToolbar();
+        navigationView.setNavigationItemSelectedListener(this);
+        drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
         ViewGroup parent = (ViewGroup) findViewById(R.id.footer_container);
         footer = LayoutInflater.from(this).inflate(R.layout.footer, parent, false);
         footer.setVisibility(View.GONE);
+        listView.setDividerHeight(12);
         listView.addFooterView(footer, null, false);
         listView.setFooterDividersEnabled(false);
         adapter = new TopicListAdapter(this, R.layout.topic_item, topics);
