@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
-import android.support.v4.view.MenuItemCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -42,6 +41,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     @Bind(R.id.drawer_layout) DrawerLayout drawerLayout;
     @Bind(R.id.navigation) NavigationView navigationView;
     @Bind(R.id.listview) ListView listView;
+    @Bind(R.id.spinner) Spinner spinner;
     private ManiListAdapter maniListAdapter;
     private SubListAdapter subListAdapter;
     private ArrayAdapter<MainForumItem> spinnerAdapter;
@@ -69,10 +69,14 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
         swipeRefreshLayout.setOnRefreshListener(this);
         swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_dark);
         listView.setOnScrollListener(this);
+        spinnerAdapter = new ArrayAdapter<MainForumItem>(this, R.layout.spinner_item, subChildren);
+        spinner.setAdapter(spinnerAdapter);
+        spinner.setOnItemSelectedListener(this);
         loadMainList();
     }
 
     private void loadMainList() {
+        spinner.setVisibility(View.GONE);
         String url = "http://bbs.saraba1st.com/2b/forum.php";
         listView.setAdapter(maniListAdapter);
         currentLevel = LEVEL_MainForum;
@@ -82,6 +86,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     }
 
     private void loadSubList() {
+        spinner.setVisibility(View.VISIBLE);
         String url = subForum.url;
         listView.setAdapter(subListAdapter);
         currentLevel = LEVEL_SubForum;
@@ -100,6 +105,7 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     }
 
     private void loadFavorite() {
+        spinner.setVisibility(View.GONE);
         listView.setAdapter(subListAdapter);
         currentLevel = LEVEL_FAVORITE;
         subForumItems.clear();
@@ -155,11 +161,6 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
-        MenuItem item = menu.findItem(R.id.spinner);
-        Spinner spinner = (Spinner) MenuItemCompat.getActionView(item);
-        spinnerAdapter = new ArrayAdapter<MainForumItem>(this, R.layout.spinner_layout, subChildren);
-        spinner.setAdapter(spinnerAdapter);
-        spinner.setOnItemSelectedListener(this);
         return true;
     }
 

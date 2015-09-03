@@ -9,4 +9,10 @@
         android:fitsSystemWindows="true"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
         app:popupTheme="@style/Theme.AppCompat.Light">
+
+    <Spinner
+            android:id="@+id/spinner"
+            android:theme="@style/AppTheme"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"/>
 </android.support.v7.widget.Toolbar>

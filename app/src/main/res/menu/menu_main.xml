@@ -8,11 +8,4 @@
             android:title="@string/show_favorite"
             android:orderInCategory="90"
             app:showAsAction="ifRoom"/>
-
-    <item
-            android:id="@+id/spinner"
-            android:title=""
-            android:orderInCategory="10"
-            app:showAsAction="ifRoom"
-            app:actionViewClass="android.widget.Spinner"/>
 </menu>

@@ -9,6 +9,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.view.*;
 import android.widget.AbsListView;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.Toast;
 import butterknife.Bind;
 import butterknife.OnItemLongClick;
@@ -38,6 +39,7 @@ public class TopicActivity extends BaseActivity implements SwipeRefreshLayout.On
     @Bind(R.id.drawer_layout) DrawerLayout drawerLayout;
     @Bind(R.id.swipe_layout) SwipeRefreshLayout swipeRefreshLayout;
     @Bind(R.id.listview) ListView listView;
+    @Bind(R.id.spinner) Spinner spinner;
     private TopicListAdapter adapter;
     private ArrayList<Topic> topics = new ArrayList<Topic>();
     private HashMap<String, ArrayList<Topic>> pageMap = new HashMap<String, ArrayList<Topic>>();
@@ -47,6 +49,7 @@ public class TopicActivity extends BaseActivity implements SwipeRefreshLayout.On
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initToolbar();
+        spinner.setVisibility(View.GONE);
         navigationView.setNavigationItemSelectedListener(this);
         drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
         ViewGroup parent = (ViewGroup) findViewById(R.id.footer_container);
