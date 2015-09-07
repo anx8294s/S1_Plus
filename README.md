@@ -11,7 +11,7 @@ Saraba1st论坛的安卓客户端
 
 缓存了论坛列表和帖子列表, 如果内存有历史记录就从历史记录读取
 
-使用 butterknife, eventbus 重构了代码
+新增加 rebuild 分支, 使用 butterknife, eventbus 重构了代码
 
 使用 toolbar 替换了 actionbar, 添加了导航抽屉
 
