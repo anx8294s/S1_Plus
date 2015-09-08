@@ -209,7 +209,9 @@ public class MainActivity extends BaseActivity implements SwipeRefreshLayout.OnR
 
     @Override
     public void onBackPressed() {
-        if (!swipeRefreshLayout.isRefreshing() && (currentLevel == LEVEL_SubForum || currentLevel == LEVEL_FAVORITE)) {
+        if (drawerLayout.isDrawerOpen(navigationView)) {
+            drawerLayout.closeDrawer(navigationView);
+        } else if (!swipeRefreshLayout.isRefreshing() && (currentLevel == LEVEL_SubForum || currentLevel == LEVEL_FAVORITE)) {
             loadMainList();
             subChildren.clear();
             spinnerAdapter.notifyDataSetChanged();

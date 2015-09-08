@@ -194,7 +194,7 @@ public class TopicActivity extends BaseActivity implements SwipeRefreshLayout.On
     @Override
     public void onScroll(AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
         if (firstVisibleItem + visibleItemCount == totalItemCount && !swipeRefreshLayout.isRefreshing()) {
-            if (pageMap.get(currentPage).size() == 30) {
+            if (pageMap.get(currentPage) != null && pageMap.get(currentPage).size() == 30) {
                 if (scrollState == SCROLL_STATE_TOUCH_SCROLL && footer.getBottom() - 80 < listView.getHeight()) {
                     String floor = topics.get(topics.size() - 1).floor.replace("#", "");
                     int pageCount = Integer.valueOf(floor) / 30 + 1;
@@ -229,6 +229,15 @@ public class TopicActivity extends BaseActivity implements SwipeRefreshLayout.On
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (drawerLayout.isDrawerOpen(navigationView)) {
+            drawerLayout.closeDrawer(navigationView);
+        } else {
+            super.onBackPressed();
+        }
     }
 
     private void startFastPost(String url) {
