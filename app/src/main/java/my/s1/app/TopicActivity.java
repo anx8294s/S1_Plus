@@ -2,18 +2,25 @@ package my.s1.app;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.NavigationView;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.app.AppCompatActivity;
 import android.view.*;
 import android.widget.AbsListView;
-import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.Toast;
+import butterknife.Bind;
+import butterknife.OnItemLongClick;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.TextHttpResponseHandler;
+import de.greenrobot.event.EventBus;
+import de.greenrobot.event.Subscribe;
 import my.s1.app.adapter.TopicListAdapter;
+import my.s1.app.models.MessageEvent;
 import my.s1.app.models.Topic;
 import my.s1.app.util.MyHttpClient;
 import my.s1.app.util.ParseHtml;
@@ -22,41 +29,53 @@ import org.apache.http.Header;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class TopicActivity extends AppCompatActivity implements AdapterView.OnItemLongClickListener,
-        SwipeRefreshLayout.OnRefreshListener, AbsListView.OnScrollListener {
+public class TopicActivity extends BaseActivity implements SwipeRefreshLayout.OnRefreshListener, AbsListView.OnScrollListener {
 
     private int scrollState = SCROLL_STATE_IDLE;
-    private boolean isFromRefresh;
+    private boolean isFromRefresh = false;
     private String currentPage;
-
     private View footer;
-    private ListView listView;
+    @Bind(R.id.navigation) NavigationView navigationView;
+    @Bind(R.id.drawer_layout) DrawerLayout drawerLayout;
+    @Bind(R.id.swipe_layout) SwipeRefreshLayout swipeRefreshLayout;
+    @Bind(R.id.listview) ListView listView;
+    @Bind(R.id.spinner) Spinner spinner;
     private TopicListAdapter adapter;
-    private SwipeRefreshLayout swipeRefreshLayout;
     private ArrayList<Topic> topics = new ArrayList<Topic>();
     private HashMap<String, ArrayList<Topic>> pageMap = new HashMap<String, ArrayList<Topic>>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.topic_layout);
-        listView = (ListView) findViewById(R.id.listview);
-        ViewGroup parent = (ViewGroup) findViewById(R.id.container);
+        setContentView(R.layout.activity_main);
+        initToolbar();
+        spinner.setVisibility(View.GONE);
+        navigationView.setNavigationItemSelectedListener(this);
+        drawerLayout.setDrawerShadow(R.drawable.drawer_shadow, GravityCompat.START);
+        ViewGroup parent = (ViewGroup) findViewById(R.id.footer_container);
         footer = LayoutInflater.from(this).inflate(R.layout.footer, parent, false);
         footer.setVisibility(View.GONE);
-        listView.addFooterView(footer);
+        listView.setDividerHeight(12);
+        listView.addFooterView(footer, null, false);
         listView.setFooterDividersEnabled(false);
         adapter = new TopicListAdapter(this, R.layout.topic_item, topics);
         listView.setAdapter(adapter);
-        listView.setOnItemLongClickListener(this);
-        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.topic_swipe);
         swipeRefreshLayout.setOnRefreshListener(this);
         swipeRefreshLayout.setColorSchemeResources(android.R.color.holo_blue_dark);
         listView.setOnScrollListener(this);
         Intent intent = getIntent();
         currentPage = intent.getStringExtra("url");
         loadTopic(currentPage);
-        MyApp.instance.setTopicActivity(this);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        EventBus.getDefault().register(this);
+    }
+
+    public void backToTop(View view) {
+        listView.setSelection(0);
     }
 
     private void loadTopic(String url) {
@@ -84,6 +103,7 @@ public class TopicActivity extends AppCompatActivity implements AdapterView.OnIt
             @Override
             public void onFailure(int statusCode, Header[] headers, String responseString, Throwable throwable) {
                 MyHttpClient.onFailure(statusCode, headers, responseString, throwable);
+                isFromRefresh = false;
                 swipeRefreshLayout.setRefreshing(false);
             }
 
@@ -118,34 +138,35 @@ public class TopicActivity extends AppCompatActivity implements AdapterView.OnIt
         });
     }
 
-    public void checkTaskDone(int urlCount, int taskCount) {
-        if ((urlCount == taskCount || taskCount > 5) && scrollState == SCROLL_STATE_IDLE) {
+    @Subscribe
+    public void onEvent(MessageEvent event) {
+        if (event.total == event.done || event.done > 5) {
             adapter.notifyDataSetChanged();
         }
     }
 
-
     @Override
-    protected void onDestroy() {
+    protected void onStop() {
         MyApp.myQueue.cancelAll(new RequestQueue.RequestFilter() {
             @Override
             public boolean apply(Request<?> request) {
                 return true;
             }
         });
-        MyApp.myDiskCache.flush();
-        MyApp.instance.setTopicActivity(null);
-        super.onDestroy();
+        EventBus.getDefault().unregister(this);
+        super.onStop();
     }
 
     @Override
-    public boolean onItemLongClick(AdapterView<?> adapterView, View view, int position, long id) {
-        if (view == footer) {
-            listView.setSelection(0);
-        } else {
-            Topic topic = topics.get(position);
-            startFastPost(topic.reply);
-        }
+    protected void onDestroy() {
+        MyApp.myDiskCache.flush();
+        super.onDestroy();
+    }
+
+    @OnItemLongClick(R.id.listview)
+    public boolean onItemLongClick(int position) {
+        Topic topic = topics.get(position);
+        startFastPost(topic.reply);
         return true;
     }
 
@@ -173,7 +194,7 @@ public class TopicActivity extends AppCompatActivity implements AdapterView.OnIt
     @Override
     public void onScroll(AbsListView absListView, int firstVisibleItem, int visibleItemCount, int totalItemCount) {
         if (firstVisibleItem + visibleItemCount == totalItemCount && !swipeRefreshLayout.isRefreshing()) {
-            if (pageMap.get(currentPage).size() == 30) {
+            if (pageMap.get(currentPage) != null && pageMap.get(currentPage).size() == 30) {
                 if (scrollState == SCROLL_STATE_TOUCH_SCROLL && footer.getBottom() - 80 < listView.getHeight()) {
                     String floor = topics.get(topics.size() - 1).floor.replace("#", "");
                     int pageCount = Integer.valueOf(floor) / 30 + 1;
@@ -205,9 +226,18 @@ public class TopicActivity extends AppCompatActivity implements AdapterView.OnIt
             Topic topic = topics.get(0);
             String url = topic.reply.replaceFirst("(tid=\\d+).+", "$1");
             startFastPost(url);
-
+            return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (drawerLayout.isDrawerOpen(navigationView)) {
+            drawerLayout.closeDrawer(navigationView);
+        } else {
+            super.onBackPressed();
+        }
     }
 
     private void startFastPost(String url) {

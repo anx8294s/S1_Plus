@@ -2,13 +2,13 @@ package my.s1.app;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+import butterknife.Bind;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.TextHttpResponseHandler;
 import my.s1.app.util.MyHttpClient;
@@ -18,14 +18,14 @@ import org.apache.http.Header;
 import java.util.HashMap;
 
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends BaseActivity {
 
-    private EditText username;
-    private EditText password;
-    private Spinner questionId;
-    private EditText answer;
-    private Button login;
-    private TextView message;
+    @Bind(R.id.user_name) EditText username;
+    @Bind(R.id.password) EditText password;
+    @Bind(R.id.question_id) Spinner questionId;
+    @Bind(R.id.answer) EditText answer;
+    @Bind(R.id.login) Button login;
+    @Bind(R.id.message) TextView message;
     private String postUrl;
     private HashMap<String, String> params;
 
@@ -33,13 +33,8 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-        MyApp.instance.clearCookie();
-        username = (EditText) findViewById(R.id.user_name);
-        password = (EditText) findViewById(R.id.password);
-        questionId = (Spinner) findViewById(R.id.question_id);
-        answer = (EditText) findViewById(R.id.answer);
-        login = (Button) findViewById(R.id.login);
-        message = (TextView) findViewById(R.id.message);
+        initToolbar();
+        MyApp.clearCookie();
         getLoginForm();
     }
 

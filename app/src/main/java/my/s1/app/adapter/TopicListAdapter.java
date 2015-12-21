@@ -10,6 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+import butterknife.Bind;
+import butterknife.ButterKnife;
 import my.s1.app.MyApp;
 import my.s1.app.R;
 import my.s1.app.models.Topic;
@@ -31,9 +33,7 @@ public class TopicListAdapter extends ArrayAdapter<Topic> {
         ViewHolder holder;
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(resource, null);
-            holder = new ViewHolder();
-            holder.title = (TextView) convertView.findViewById(R.id.topic_title);
-            holder.content = (TextView) convertView.findViewById(R.id.topic_content);
+            holder = new ViewHolder(convertView);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -46,11 +46,18 @@ public class TopicListAdapter extends ArrayAdapter<Topic> {
             @Override
             public Drawable getDrawable(String s) {
                 String key = MyApp.myDiskCache.hashKey(s);
-                Bitmap bitmap = MyApp.myMemoryCacheLruCache.get(key);
+                Bitmap bitmap = MyApp.myMemoryLruCache.get(key);
                 Drawable drawable = null;
                 if (bitmap != null) {
-                    drawable = new BitmapDrawable(getContext().getResources(), bitmap);
-                    drawable.setBounds(0, 0, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
+                    int width = bitmap.getWidth();
+                    int height = bitmap.getHeight();
+                    if (width > 13 && width < 45 && height < 45) {
+                        drawable = new BitmapDrawable(getContext().getResources(),
+                                Bitmap.createScaledBitmap(bitmap, 64, 64, true));
+                    } else {
+                        drawable = new BitmapDrawable(getContext().getResources(), bitmap);
+                    }
+                    drawable.setBounds(8, 0, drawable.getIntrinsicWidth() + 8, drawable.getIntrinsicHeight());
                 }
                 return drawable;
             }
@@ -58,8 +65,12 @@ public class TopicListAdapter extends ArrayAdapter<Topic> {
         return convertView;
     }
 
-    private static class ViewHolder {
-        TextView title;
-        TextView content;
+    static class ViewHolder {
+        @Bind(R.id.topic_title) TextView title;
+        @Bind(R.id.topic_content) TextView content;
+
+        public ViewHolder(View view) {
+            ButterKnife.bind(this, view);
+        }
     }
 }

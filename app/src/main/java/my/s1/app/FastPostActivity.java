@@ -2,12 +2,12 @@ package my.s1.app;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+import butterknife.Bind;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.TextHttpResponseHandler;
 import my.s1.app.util.MyHttpClient;
@@ -17,9 +17,9 @@ import org.apache.http.Header;
 import java.util.HashMap;
 
 
-public class FastPostActivity extends AppCompatActivity {
-    private EditText editText;
-    private Button button;
+public class FastPostActivity extends BaseActivity {
+    @Bind(R.id.post_body) EditText editText;
+    @Bind(R.id.post_done) Button button;
     private String postUrl;
     private HashMap<String, String> params;
 
@@ -27,8 +27,7 @@ public class FastPostActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_fast_post);
-        editText = (EditText) findViewById(R.id.post_body);
-        button = (Button) findViewById(R.id.post_done);
+        initToolbar();
         Intent intent = getIntent();
         String url = intent.getStringExtra("url");
         loadReplyForm(url);

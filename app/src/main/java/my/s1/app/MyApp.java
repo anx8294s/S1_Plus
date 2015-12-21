@@ -15,29 +15,26 @@ import my.s1.app.util.MyHttpClient;
 
 public class MyApp extends Application {
     public static MyApp instance;
-    public static TopicActivity topicActivity;
+    private static PersistentCookieStore cookieStore;
     public static RequestQueue myQueue;
     public static MyDiskCache myDiskCache;
     public static ImageLoader myImageLoader;
-    public static LruCache<String, Bitmap> myMemoryCacheLruCache;
+    public static LruCache<String, Bitmap> myMemoryLruCache;
     public static int screenWidth;
     public static int screenHeight;
-
-    private PersistentCookieStore cookieStore;
 
     @Override
     public void onCreate() {
         instance = this;
         cookieStore = new PersistentCookieStore(instance);
         MyHttpClient.client.setCookieStore(cookieStore);
-        MyHttpClient.client.setTimeout(8000);
-        MyHttpClient.client.setMaxRetriesAndTimeout(2, 3000);
+        MyHttpClient.client.setTimeout(6000);
+        MyHttpClient.client.setMaxRetriesAndTimeout(2, 2000);
         myQueue = Volley.newRequestQueue(instance);
         myDiskCache = new MyDiskCache();
         myImageLoader = new ImageLoader(myQueue, myDiskCache);
         int cacheSize = (int) (Runtime.getRuntime().maxMemory() / 3);
-        myMemoryCacheLruCache = new LruCache<String, Bitmap>(cacheSize) {
-
+        myMemoryLruCache = new LruCache<String, Bitmap>(cacheSize) {
             @Override
             protected int sizeOf(String key, Bitmap value) {
                 return value.getByteCount();
@@ -51,11 +48,7 @@ public class MyApp extends Application {
         screenHeight = size.y - 80;
     }
 
-    public void setTopicActivity(TopicActivity activity) {
-        topicActivity = activity;
-    }
-
-    public void clearCookie() {
+    public static void clearCookie() {
         cookieStore.clear();
     }
 

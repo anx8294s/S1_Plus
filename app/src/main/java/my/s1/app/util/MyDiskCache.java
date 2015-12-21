@@ -32,7 +32,7 @@ public class MyDiskCache implements ImageLoader.ImageCache {
     public void putBitmap(String url, Bitmap bitmap) {
         try {
             String key = hashKey(url);
-            MyApp.myMemoryCacheLruCache.put(key, bitmap);
+            MyApp.myMemoryLruCache.put(key, bitmap);
             DiskLruCache.Editor editor = mDiskLruCache.edit(key);
             OutputStream out = new BufferedOutputStream(editor.newOutputStream(0), IO_BUFFER_SIZE);
             bitmap.compress(mCompressFormat, 50, out);
@@ -48,7 +48,7 @@ public class MyDiskCache implements ImageLoader.ImageCache {
         Bitmap bitmap = null;
         try {
             String key = hashKey(url);
-            bitmap = MyApp.myMemoryCacheLruCache.get(key);
+            bitmap = MyApp.myMemoryLruCache.get(key);
             if (bitmap != null) {
                 return bitmap;
             }
@@ -56,7 +56,7 @@ public class MyDiskCache implements ImageLoader.ImageCache {
             if (snapShot != null) {
                 InputStream inputStream = snapShot.getInputStream(0);
                 bitmap = BitmapFactory.decodeStream(inputStream);
-                MyApp.myMemoryCacheLruCache.put(key, bitmap);
+                MyApp.myMemoryLruCache.put(key, bitmap);
             }
         } catch (IOException e) {
             e.printStackTrace();
